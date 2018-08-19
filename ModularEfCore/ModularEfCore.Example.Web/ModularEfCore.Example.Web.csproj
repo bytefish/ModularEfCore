@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ModularEfCore.Example\ModularEfCore.Example.csproj" />
+    <ProjectReference Include="..\ModularEfCore.Migrations\ModularEfCore.Migrations.csproj" />
+    <ProjectReference Include="..\ModularEfCore\ModularEfCore.csproj" />
+  </ItemGroup>
+
+</Project>
