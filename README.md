@@ -2,6 +2,10 @@
 
 This repository shows a simple way to build modular applications using Entity Framework Core 2.1. Instead of building a huge ``DbContext`` for the Application, it is injecting mappings registered in the application root.
 
+I have written an article on it over at:
+
+* [https://bytefish.de/blog/modular_ef_core/](https://bytefish.de/blog/modular_ef_core/)
+
 ## Creating the Database ##
 
 First adjust the following Connection String the ``appsettings.json`` of the ``ModularEfCore.Example.Web`` project:
