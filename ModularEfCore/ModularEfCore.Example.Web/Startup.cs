@@ -74,8 +74,6 @@ namespace ModularEfCore.Example.Web
 
             // Finally Add the Applications DbContext:
             services.AddDbContext<ApplicationDbContext>();
-
-            
             
             services
                 // Use MVC:
