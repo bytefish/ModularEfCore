@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ModularEfCore.Context;
@@ -17,67 +18,45 @@ using NUnit.Framework;
 namespace ModularEfCore.Example.Test
 {
     [TestFixture]
-    public class CustomerTest : TransactionalTestBase
+    public class AsyncCustomerTest : AsyncTransactionalTestBase
     {
-        protected override void OnSetupBeforeTransaction()
+        protected override async Task OnSetupBeforeTransactionAsync()
         {
-            // Now first resolve the Factory for creating the ApplicationDbContext:
-            var factory = services.GetService<IApplicationDbContextFactory>();
-
-            // Make sure the Test Database is created:
-            using (var context = factory.Create())
-            {
-                context.Database.EnsureCreated();
-            }
+            await context.Database.EnsureCreatedAsync();
         }
 
         [Test]
-        public void TestInsertUsers()
+        public async Task TestInsertUsersAsync()
         {
             // Generate some Test Data:
             var customer1 = new Customer() {FirstName = "A", LastName = "Wagner"};
             var customer2 = new Customer() {FirstName = "B", LastName = "Mustermann"};
 
-            // Now first resolve the Factory for creating the ApplicationDbContext:
-            var factory = services.GetService<IApplicationDbContextFactory>();
-
             // Insert the Two Customers:
-            using (var context = factory.Create())
-            {
-                context.DbSet<Customer>().Add(customer1);
-                context.DbSet<Customer>().Add(customer2);
+            await context.DbSet<Customer>().AddRangeAsync(customer1, customer2);
 
-                context.SaveChanges();
-            }
+            await context.SaveChangesAsync();
 
-            // Use the Factory to create the ApplicationDbContext:
-            using (var context = factory.Create())
-            {
-                var result = context.DbSet<Customer>()
-                    .OrderBy(x => x.FirstName)
-                    .ToList();
+            var result = await context.DbSet<Customer>()
+                .OrderBy(x => x.FirstName)
+                .ToListAsync();
 
-                // Check the two Customers have been successfully inserted into the DB:
-                Assert.AreEqual(result[0].FirstName, customer1.FirstName);
-                Assert.AreEqual(result[0].LastName, customer1.LastName);
+            // Check the two Customers have been successfully inserted into the DB:
+            Assert.AreEqual(result[0].FirstName, customer1.FirstName);
+            Assert.AreEqual(result[0].LastName, customer1.LastName);
 
-                Assert.AreEqual(result[1].FirstName, customer2.FirstName);
-                Assert.AreEqual(result[1].LastName, customer2.LastName);
-            }
+            Assert.AreEqual(result[1].FirstName, customer2.FirstName);
+            Assert.AreEqual(result[1].LastName, customer2.LastName);
         }
 
-        protected override void OnTeardownAfterTransaction()
+        protected override async Task OnTeardownAfterTransactionAsync()
         {
-            // Now first resolve the Factory for creating the ApplicationDbContext:
-            var factory = services.GetService<IApplicationDbContextFactory>();
-
             // Insert the Two Customers:
-            using (var context = factory.Create())
-            {
-                var countOfCustomers = context.DbSet<Customer>().Count();
+            var countOfCustomers = await context.DbSet<Customer>()
+                .CountAsync()
+                .ConfigureAwait(false);
 
-                Assert.AreEqual(0, countOfCustomers);
-            }
+            Assert.AreEqual(0, countOfCustomers);
         }
 
         protected override void RegisterDependencies(ServiceCollection services)

@@ -13,7 +13,7 @@ namespace ModularEfCore.Example.Database.Map
         protected override void InternalMap(EntityTypeBuilder<Customer> builder)
         {
             builder
-                .ToTable("Sample", "Customer");
+                .ToTable("Customer", "Sample");
 
             builder
                 .HasKey(x => x.Id)
