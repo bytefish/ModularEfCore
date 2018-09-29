@@ -41,7 +41,7 @@ namespace ModularEfCore.Context
                 mapping.Map(builder);
             }
 
-            options.DbContextSeed.Seed(builder);
+            options.DbContextSeed?.Seed(builder);
         }
     }
 
